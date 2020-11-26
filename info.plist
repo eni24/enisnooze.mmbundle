@@ -1,7 +1,7 @@
 {
-  contactEmailRot13 = 'cerantun@erantuna.pbz';
-  contactName       = 'Padraic Renaghan';
+  contactEmailRot13 = '';
+  contactName       = '';
   description       = 'Snooze messages until later';
   name              = 'Snooze';
-  uuid              = '18954461-EF42-45D7-AFA5-4ABB768F7404';
+  uuid              = 'EC8ACCAD-2E33-4B5E-8E35-96497111D965';
 }

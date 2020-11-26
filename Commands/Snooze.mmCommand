@@ -1,6 +1,6 @@
 {
-  name          = '7. Pick a Date';
-  uuid          = 'E82ABF1D-DC64-4005-89F4-6C3E7608B1C4';
+  name          = 'Snooze';
+  uuid          = '511A7A50-8C85-4A5A-842E-DAD9A0679D66';
   input         = 'none';
   output        = 'actions';
   keyEquivalent = '^z';
@@ -8,6 +8,6 @@
 '#!/bin/bash
 PATH=/usr/local/bin:/usr/bin:$PATH
 PICK=`"${MM_BUNDLE_SUPPORT}/bin/pick.sh"`
-/usr/local/anaconda3/bin/python "${MM_BUNDLE_SUPPORT}/bin/snooze.py" pick $PICK
+/usr/local/anaconda3/bin/python "${MM_BUNDLE_SUPPORT}/bin/snooze.py" $PICK
 ';
 }

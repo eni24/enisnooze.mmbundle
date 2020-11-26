@@ -1,66 +1,55 @@
 #!/usr/local/bin/python3
 ####!/usr/bin/env python3
 
-#
-# Snooze the message until a future date
-# Move the message to the /Later folder
-# Mark the message as Seen and Not Junk
-# https://www.mail-archive.com/mailmate@lists.freron.com/msg05451.html
-#
 import sys
 import datetime
 import pytz
 
-MORNING_HOUR=6
-EVENING_HOUR=18
+WEEKDAYS = "mon", "tue", "wed", "thu", "fri", "sat", "sun"
+TIMESPEC = "d", "w", "m"
 
-def monday(d):
-  if d.weekday() == 0:
-    return d
-  return d + datetime.timedelta(days=7-d.weekday())
 
-def saturday(d):
-  if d.weekday() == 5:
-    return d
-  if d.weekday() == 6:
-    return d + datetime.timedelta(days=6)
-  return d + datetime.timedelta(days=5-d.weekday())
+def timespec2days(spec):
+  unit = spec[-1]
+  amount = int(spec[0:len(spec) - 1])
+  
+  if unit == "d": return amount
+  elif unit == "w": return amount * 7
+  elif unit == "m": return amount * 30
+  else: 
+    raise ValueError("Invalid unit in timespec: '" + unit + "'")
+
 
 dt = datetime.datetime.today()
-dt = dt.replace(hour=MORNING_HOUR, minute=0, second=0, microsecond=0)
+dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
-when = sys.argv[1]
+# standardize user input
+x = sys.argv[1].lower().strip()
 
-if when == "evening":
-  dt = dt.replace(hour=EVENING_HOUR)
-elif when == "tomorrow":
-  dt = dt + datetime.timedelta(days=1)
-elif when == "tomorrowevening":
-  dt = dt.replace(hour=EVENING_HOUR)
-  dt = dt + datetime.timedelta(days=1)
-elif when == "weekend":
-  dt = dt + datetime.timedelta(days=1)
-  dt = saturday(dt)
-elif when == "nextweek":
-  dt = dt + datetime.timedelta(days=1)
-  dt = monday(dt)
-elif when == "twoweeks":
-  dt = dt + datetime.timedelta(days=1)
-  dt = monday(dt)
-  dt = dt + datetime.timedelta(days=1)
-  dt = monday(dt)
-elif when == "month":
-  dt = dt + datetime.timedelta(weeks=4)
-  dt = monday(dt)
-elif when == "pick":
-  dt = datetime.datetime.strptime(sys.argv[2], "%Y-%m-%d")
-  dt = dt.replace(hour=MORNING_HOUR, minute=0, second=0, microsecond=0)
-elif when == "test":
-  dt = datetime.datetime.today()
-  dt = dt.replace(second=0, microsecond=0)
-  dt = dt + datetime.timedelta(minutes=5)
+# check if weekday was entered
+if x in WEEKDAYS: 
+  twd = WEEKDAYS.index(x)  # target weekday
+  delta = twd - dt.weekday()  
+  if delta <= 0: delta += 7   # days until target wd
+  dt = dt + datetime.timedelta(days=delta)
+  
+# "tom" = tomorrow
+elif x == "tom": # tomorrow
+  delta = 1
+  dt = dt + datetime.timedelta(days=delta)
+
+# specified "d" "m" or "w"?
+elif x[-1] in TIMESPEC:
+  delta = timespec2days(x)
+  dt = dt + datetime.timedelta(days=delta)
+
+# target date yyyy-mm-dd
 else:
-  raise ValueError("Invalid script argument")
+  try:
+    dt = datetime.datetime.strptime(x, "%Y-%m-%d")
+    dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+  except:
+    ValueError("Invalid snooze time format: '" + x + "'")
 
 until = dt.strftime("%A, %b %-d %Y")
 dt = pytz.timezone('UTC').localize(dt)
@@ -85,5 +74,7 @@ out = '''
   },
 ); }
 ''' % (dts, until)
+
+
 print (out)
 
