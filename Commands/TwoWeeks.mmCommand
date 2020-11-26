@@ -1,0 +1,12 @@
+{
+  name          = '5. Two Weeks';
+  uuid          = '69FFCCA9-9401-4C9B-9AA0-671612D6AC19';
+  input         = 'none';
+  output        = 'actions';
+  keyEquivalent = '^z';
+  script        =
+'#!/bin/bash
+PATH=/usr/local/bin:/usr/bin:$PATH
+/usr/local/anaconda3/bin/python "${MM_BUNDLE_SUPPORT}/bin/snooze.py" twoweeks
+';
+}

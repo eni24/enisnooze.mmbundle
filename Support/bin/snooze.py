@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/local/bin/python3
+####!/usr/bin/env python3
 
 #
 # Snooze the message until a future date
@@ -43,11 +44,16 @@ elif when == "weekend":
 elif when == "nextweek":
   dt = dt + datetime.timedelta(days=1)
   dt = monday(dt)
+elif when == "twoweeks":
+  dt = dt + datetime.timedelta(days=1)
+  dt = monday(dt)
+  dt = dt + datetime.timedelta(days=1)
+  dt = monday(dt)
 elif when == "month":
   dt = dt + datetime.timedelta(weeks=4)
   dt = monday(dt)
 elif when == "pick":
-  dt = datetime.datetime.strptime(sys.argv[2], "%m/%d/%y")
+  dt = datetime.datetime.strptime(sys.argv[2], "%Y-%m-%d")
   dt = dt.replace(hour=MORNING_HOUR, minute=0, second=0, microsecond=0)
 elif when == "test":
   dt = datetime.datetime.today()
@@ -56,9 +62,9 @@ elif when == "test":
 else:
   raise ValueError("Invalid script argument")
 
-until = dt.strftime("%a %b %-d %-I %p")
+until = dt.strftime("%A, %b %-d %Y")
 dt = pytz.timezone('UTC').localize(dt)
-dts = dt.strftime("%Y-%m-%d %H:%M:%S")
+dts = dt.strftime("%Y-%m-%d")
 
 out = '''
 { actions = (
@@ -73,13 +79,9 @@ out = '''
     formatString = "Snoozed until %s";
   },
   {
-    type = "moveMessage";
-    mailbox = "/Later";
-  },
-  {
     type    = "changeFlags";
-    enable  = ( "\\Seen", "\\$NotJunk" );
-    disable = ( "\\$Junk", "\\Junk" );
+    enable  = ( "\\Seen", "\\$NotJunk", "$snoozed");
+    disable = ( "\\$Junk", "\\Junk");
   },
 ); }
 ''' % (dts, until)

@@ -7,6 +7,6 @@
   script        =
 '#!/bin/bash
 PATH=/usr/local/bin:/usr/bin:$PATH
-"${MM_BUNDLE_SUPPORT}/bin/snooze.py" month
+/usr/local/anaconda3/bin/python "${MM_BUNDLE_SUPPORT}/bin/snooze.py" month
 ';
 }
