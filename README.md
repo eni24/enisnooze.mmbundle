@@ -6,9 +6,6 @@ Just adapting a few things to meet my needs. In particular:
 # Requirements
 
 **TODO** 
-* Add option to unsnooze mail
-    * remove $snoozed-Tag
-    * (Optional) remove the "x-snooze"-header.
 
 * Confirmation Dialogue before UNSNOOZE
 
@@ -18,11 +15,23 @@ Just adapting a few things to meet my needs. In particular:
 
 * Add option to Cancel the Picker-Dialogue => (via Cancel Button and ESCAPE-Key)
 
+* Add option to unsnooze mail
+    * remove $snoozed-Tag => DONE
+    * (Optional) remove the "x-snooze"-header. => DONE. However Original-x-snoozed header remains
+
+* Allow 'xx' to unsnooze email
+
 # Bugs
+
+### Open
+* Exact month timespec calculation
+
+### Fixed
 
 * I view all my snoozed email in a smart folder plus subfolders for each snooze date. Unfortunately, when changing the snooze date, the mail remains visible in the old folder. This is only corrected after MM restarts. 
 
-* Exact month timespec calculation
+  => Seems to be a bug in MailMate subfolders. Workaround: Do not use the smartfolder checkbox `Submailbox for the messages of each account` 
+
 
 # CONFIG
 
