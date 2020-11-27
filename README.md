@@ -26,9 +26,10 @@ Just adapting a few things to meet my needs. In particular:
 
 # Installation
 1. Set up python on your mac
-2. Download or Clone repo
-3. Copy or link the repo to your `mailmate/bundles` directory.
-4. Start Mailmate. "Snooze" should by in the Command menu
+2. Install python module "pytz"
+3. Download or Clone repo
+4. Copy or link the repo to your `mailmate/bundles` directory.
+5. Start Mailmate. "Snooze" should by in the Command menu
 
 ## example
 ```bash
