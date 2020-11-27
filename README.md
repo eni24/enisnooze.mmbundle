@@ -2,7 +2,7 @@
 * MailMate lacks a way to schedule mail for a later date.
 * Found the code at https://github.com/prenagha/snooze.mmbundle
 * Forked it
-* Adapting it to meet my needs
+* Adapted it to meet my needs
 
 If anybody but me is actually going to use this feel free to file bugs and feature requests.
 
