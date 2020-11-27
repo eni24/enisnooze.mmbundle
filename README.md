@@ -26,6 +26,7 @@ Just adapting a few things to meet my needs. In particular:
 
 # CONFIG
 
+## Highlight snoozed messages in list view
 To highlight snoozed messages in list view add this to `Styles.plist`:
 ```javascript
 {   styles = 
@@ -39,3 +40,16 @@ To highlight snoozed messages in list view add this to `Styles.plist`:
 ```
 
 *(My `Styles.plist` is in `~/Library/Application Support/MailMate/`)*
+
+## Create smart folder to view scheduled mail by date
+Create a smart folder like this:
+
+* **Mailboxes:** Pick one Mailbox. I use one Account per smart folder (see issue below).
+* **Conditions:** Tags/Keywords include "$snoozed"
+* **Submailbox for each unique value of:** x-Snooze   (you may need to snooze an email before this option shows up)
+
+DO NOT USE THE OPTION `Submailbox for the messages of each account`. 
+It seems Mailmate has a bug here. When using the option, MailMate won't refreshing the folders properly when changing snooze times. 
+
+
+
