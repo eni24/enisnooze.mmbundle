@@ -3,23 +3,26 @@ Fork from prenagha/snooze.mmbundle
 
 Just adapting a few things to meet my needs. In particular:
 
-# Requirements
+# Features
 
-**TODO** 
+* Using tag "$snoozed" instead of the "Later" IMAP-Folder. This allows me to keep my folders organized as I wish; and to snooze sent mail (which I like to keep in the "Sent"-Folder
 
-* Confirmation Dialogue before UNSNOOZE
+* Picker-Dialogue 
+  * Shows entry options
+  * Can by Cancelled voa Escape-Key and Cancel Button
 
-**DONE**
+* Picker Dialogue allows:
+  * Snooze for days (1d, 5d, ...), weeks (1w, 3w) and months (1m, 2m, ...)
+  * Snooze until next weekday (mon, tue, wed, ..., sun)
+  * Snooze until tomorrow (tom)
+  * Snooze until date (2020-22-10, 2030-05-03, ...)
+  * Unsnooze (xx)
 
-* Use tag "$snoozed" instead of the "Later" IMAP-Folder. This allows me to keep my folders organized and also snooze sent mail (which I like to keep in the "Sent"-Folder
+* Option to unsnooze mail. This removes the $snoozed-Tag as well as the "x-snooze"-header (However Original-x-snoozed header remains)
 
-* Add option to Cancel the Picker-Dialogue => (via Cancel Button and ESCAPE-Key)
-
-* Add option to unsnooze mail
-    * remove $snoozed-Tag => DONE
-    * (Optional) remove the "x-snooze"-header. => DONE. However Original-x-snoozed header remains
-
-* Allow 'xx' to unsnooze email
+* Key shortcuts
+  * ^z: show snooze dialogue
+  * ^Z: unsnooze
 
 # CONFIG
 
