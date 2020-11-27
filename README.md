@@ -24,6 +24,20 @@ Just adapting a few things to meet my needs. In particular:
   * ^z: show snooze dialogue
   * ^Z: unsnooze
 
+# Installation
+1. Set up python on your mac
+2. Download or Clone repo
+3. Copy or link the repo to your `mailmate/bundles` directory.
+4. Start Mailmate. "Snooze" should by in the Command menu
+
+## example
+```bash
+  $ cd my/path/to/the/repo/
+  $ git clone ...
+  $ cd /Users/XXXX/Library/Application Support/MailMate/Bundles
+  $ ln -s enisnooze.mmbundle -> my/path/to/the/repo/enisnooze.mmbundle/
+```
+
 # CONFIG
 
 ## Highlight snoozed messages in list view
