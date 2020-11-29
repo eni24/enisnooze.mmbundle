@@ -1,40 +1,50 @@
 # INTRO
-Fork from prenagha/snooze.mmbundle
+* MailMate lacks a way to schedule mail for a later date.
+* Found the code at https://github.com/prenagha/snooze.mmbundle
+* Forked it
+* Adapted it to meet my needs
 
-Just adapting a few things to meet my needs. In particular:
+If anybody but me is actually going to use this feel free to file bugs and feature requests.
 
-# Requirements
+# Features
 
-**TODO** 
+* Using tag "$snoozed" instead of the "Later" IMAP-Folder. This allows me to keep my folders organized as I wish; and to snooze sent mail (which I like to keep in the "Sent"-Folder
 
-* Confirmation Dialogue before UNSNOOZE
+* Picker-Dialogue 
+  * Shows entry options
+  * Can by Cancelled voa Escape-Key and Cancel Button
 
-**DONE**
+* Picker Dialogue allows:
+  * Snooze for days (1d, 5d, ...), weeks (1w, 3w) and months (1m, 2m, ...)
+  * Snooze until next weekday (mon, tue, wed, ..., sun)
+  * Snooze until tomorrow (tom)
+  * Snooze until date (2020-22-10, 2030-05-03, ...)
+  * Unsnooze (xx)
 
-* Use tag "$snoozed" instead of the "Later" IMAP-Folder. This allows me to keep my folders organized and also snooze sent mail (which I like to keep in the "Sent"-Folder
+* Option to unsnooze mail. This removes the $snoozed-Tag as well as the "x-snooze"-header (However Original-x-snoozed header remains)
 
-* Add option to Cancel the Picker-Dialogue => (via Cancel Button and ESCAPE-Key)
+* Key shortcuts
+  * ^z: show snooze dialogue
+  * ^Z: unsnooze
 
-* Add option to unsnooze mail
-    * remove $snoozed-Tag => DONE
-    * (Optional) remove the "x-snooze"-header. => DONE. However Original-x-snoozed header remains
+# Installation
+1. Set up python on your mac
+2. Install python module "pytz"
+3. Download or Clone repo
+4. Copy or link the repo to your `mailmate/bundles` directory.
+5. Start Mailmate. "Snooze" should by in the Command menu
 
-* Allow 'xx' to unsnooze email
-
-# Bugs
-
-### Open
-* Exact month timespec calculation
-
-### Fixed
-
-* I view all my snoozed email in a smart folder plus subfolders for each snooze date. Unfortunately, when changing the snooze date, the mail remains visible in the old folder. This is only corrected after MM restarts. 
-
-  => Seems to be a bug in MailMate subfolders. Workaround: Do not use the smartfolder checkbox `Submailbox for the messages of each account` 
-
+## example
+```bash
+  $ cd my/path/to/the/repo/
+  $ git clone ...
+  $ cd /Users/XXXX/Library/Application Support/MailMate/Bundles
+  $ ln -s enisnooze.mmbundle -> my/path/to/the/repo/enisnooze.mmbundle/
+```
 
 # CONFIG
 
+## Highlight snoozed messages in list view
 To highlight snoozed messages in list view add this to `Styles.plist`:
 ```javascript
 {   styles = 
@@ -48,3 +58,16 @@ To highlight snoozed messages in list view add this to `Styles.plist`:
 ```
 
 *(My `Styles.plist` is in `~/Library/Application Support/MailMate/`)*
+
+## Create smart folder to view scheduled mail by date
+Create a smart folder like this:
+
+* **Mailboxes:** Pick one Mailbox. I use one Account per smart folder (see issue below).
+* **Conditions:** Tags/Keywords include "$snoozed"
+* **Submailbox for each unique value of:** x-Snooze   (you may need to snooze an email before this option shows up)
+
+DO NOT USE THE OPTION `Submailbox for the messages of each account`. 
+It seems Mailmate has a bug here. When using the option, MailMate won't refreshing the folders properly when changing snooze times. 
+
+
+
