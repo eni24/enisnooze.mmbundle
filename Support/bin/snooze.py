@@ -3,7 +3,7 @@
 import sys
 import datetime
 import pytz
-from Support.bin.snooze_helpers import snooze2days, snooze2targetdate
+from snooze_helpers import snooze2days, snooze2targetdate
 
 UNSNOOZE_OUTPUT = '''
 { actions = (
