@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEF=`1d"`
+DEF=`1d`
 osascript <<END
 tell application "System Events"
 	activate
