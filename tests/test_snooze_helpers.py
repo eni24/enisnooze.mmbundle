@@ -1,14 +1,18 @@
 import pytest
-from Support.bin.snooze_helpers import snooze2days, snooze2targetdate
+from Support.bin.snooze_helpers import snooze2days, parse_input
+import datetime
 
 
-@pytest.mark.parametrize("x, y",  [
-    ("2d", 2),
-    ("5d", 5),
-    ("1d", 1),
+@pytest.mark.parametrize("ds_today,x,ds_result",  [
+    ("2020-06-01", "2d", "2020-06-03"),
+    ("2020-06-01", "5d", "2020-06-06"),
+    ("2020-06-01", "1d", "2020-06-02"),
+    ("2012-12-31", "1d", "2013-01-01"),
 ])
-def test_timespec2days_days(x, y):
-    assert snooze2days(x) == int(y)
+def test_snooze_days(ds_today, x, ds_result):
+    today = datetime.datetime.strptime(ds_today, "%Y-%m-%d")
+    snoozedate = parse_input(x, today)
+    assert  snoozedate.strftime("%Y-%m-%d") == ds_result
 
 
 @pytest.mark.parametrize("x,y",  [
@@ -43,10 +47,45 @@ def test_timespec2days_invalid():
     ("2020-02-29"),
     ("1000-12-24"),
 ])
-def test_dateparsing(ds):
-    date = snooze2targetdate(ds)
+def test_dateparsing_ansi(ds):
+    date = parse_input(ds)
     assert date is not None
     assert date.strftime("%Y-%m-%d") == ds
+
+
+@pytest.mark.parametrize("ds,result", [
+    ("2.1.1900", "02.01.1900"),
+    ("02.1.1900", "02.01.1900"),
+    ("2.01.1900", "02.01.1900"),
+    ("2.1.1900", "02.01.1900"),
+    ("31.12.2999", "31.12.2999"),
+    ("29.2.2020", "29.02.2020"),
+    ("24.12.1000", "24.12.1000"),
+])
+def test_dateparsing_dmy(ds, result):
+    date = parse_input(ds)
+    assert date is not None
+    assert date.strftime("%d.%m.%Y") == result
+
+
+@pytest.mark.parametrize("ds_today,ds,ds_result", [
+    ("2.12.2020", "24.12.", "24.12.2020"),
+    ("1.1.2030", "2.1.", "02.01.2030"),
+    ("2.1.2030", "1.1.", "01.01.2031"),
+    ("1.1.2030", "1.1.", "01.01.2031"),
+    ("2.12.2020", "02.1.", "02.01.2021"),
+    ("2.12.2020", "2.01.", "02.01.2021"),
+    ("2.12.2020", "2.1.", "02.01.2021"),
+    ("2.12.2020", "31.12.", "31.12.2020"),
+    ("2.1.2024", "28.2.", "28.02.2024"),
+    ("2.12.2020", "24.12.", "24.12.2020"),
+])
+def test_dateparsing_dm_without_year(ds_today, ds, ds_result):
+    today = datetime.datetime.strptime(ds_today, "%d.%m.%Y")
+    snoozedate = parse_input(ds, today)
+
+    assert snoozedate is not None
+    assert snoozedate.strftime("%d.%m.%Y") == ds_result
 
 
 @pytest.mark.parametrize("ds", [
@@ -61,8 +100,15 @@ def test_dateparsing(ds):
     ("a"),
     ("1"),
     (""),
-    (None),
 ])
 def test_dateparsing_invalid(ds):
     with pytest.raises(ValueError):
-        snooze2targetdate(ds)
+        parse_input(ds)
+
+
+def test_unspecified_snooze():
+    snoozedate = parse_input("ff")
+
+    assert snoozedate is not None
+    assert snoozedate.strftime("%Y-%m-%d") == "1900-01-01"
+

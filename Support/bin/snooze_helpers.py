@@ -23,13 +23,39 @@ def timespec2days(spec):
     raise ValueError("Invalid unit in timespec: '" + unit + "'")
 
 
-def snooze2targetdate(x):
+# Parse snooze-String using Standard-Formats
+def snooze2targetdate(x, todays_date):
+
+    # try first format
+    try:
+        return snooze2targetdate_with_format(x, "%Y-%m-%d")
+    except (ValueError):
+        pass
+
+    # try next format
+    try:
+        return snooze2targetdate_with_format(x, "%d.%m.%Y")
+    except (ValueError):
+        pass
+
+    # try next format
+    # and let exception fly
+    dt = snooze2targetdate_with_format(x, "%d.%m.")
+    dt = dt.replace(year=todays_date.year)
+    if todays_date >= dt:
+        dt = dt.replace(year=todays_date.year + 1)
+
+    return dt
+
+
+# Parse snooze-String using Standard-Formats and provided date-format
+def snooze2targetdate_with_format(x, frmt):
     # target date yyyy-mm-dd
     if x is None:
         raise ValueError("Invalid snooze time format: <None>")
 
     try:
-        dt = datetime.datetime.strptime(x, "%Y-%m-%d")
+        dt = datetime.datetime.strptime(x, frmt)
         return dt.replace(hour=0, minute=0, second=0, microsecond=0)
     except ValueError:
         raise ValueError("Invalid snooze time format: '" + x + "'")
@@ -64,3 +90,20 @@ def snooze2days(x):
 
     # if all fails: return -1
     return -1
+
+
+def parse_input(x, todays_date=datetime.datetime.today()):
+
+    if x == "ff":
+        return datetime.datetime.strptime("1900-01-01", "%Y-%m-%d")
+
+    days = snooze2days(x)
+    dt = todays_date
+
+    if days > 0:
+        dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+        dt = dt + datetime.timedelta(days)
+    else:
+        dt = snooze2targetdate(x, todays_date)  # may raise error
+
+    return dt

@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
-import datetime
 import pytz
-from snooze_helpers import snooze2days, snooze2targetdate
+from snooze_helpers import parse_input
 
 UNSNOOZE_OUTPUT = '''
 { actions = (
@@ -30,14 +29,8 @@ x = sys.argv[1].lower().strip()
 if x == "xx":
     print(UNSNOOZE_OUTPUT)
 else:
-    days = snooze2days(x)
-    dt = datetime.datetime.today()
 
-    if days > 0:
-        dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
-        dt = dt + datetime.timedelta(days)
-    else:
-        dt = snooze2targetdate(x)  # may raise error
+    dt = parse_input(x)
 
     until = dt.strftime("%A, %b %-d %Y")
     dt = pytz.timezone('UTC').localize(dt)
@@ -48,7 +41,7 @@ else:
     # print (dts)
 
     out = '''
-  { actions = (
+    { actions = (
     {
       type = "changeHeaders";
       headers = { 
@@ -64,7 +57,7 @@ else:
       enable  = ( "\\Seen", "\\$NotJunk", "$snoozed");
       disable = ( "\\$Junk", "\\Junk");
     },
-  ); }
-  ''' % (dts, until)
+    ); }
+    ''' % (dts, until)
 
     print(out)
