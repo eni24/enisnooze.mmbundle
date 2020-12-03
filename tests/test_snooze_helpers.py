@@ -131,4 +131,4 @@ def test_unspecified_snooze():
     snoozedate = parse_input("ff")
 
     assert snoozedate is not None
-    assert snoozedate.strftime("%Y-%m-%d") == "1900-01-01"
+    assert snoozedate.strftime("%Y-%m-%d") == "3000-01-01"

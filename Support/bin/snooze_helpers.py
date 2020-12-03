@@ -102,7 +102,7 @@ def parse_input(x, todays_date=datetime.datetime.today()):
     elif len(x) == 0:
         raise ValueError("Invalid Input with length 0")
     elif x == "ff":
-        return datetime.datetime.strptime("1900-01-01", "%Y-%m-%d")
+        return datetime.datetime.strptime("3000-01-01", "%Y-%m-%d")
 
     try:
         # parse as spec (2d, 1m, 3w, ...)
