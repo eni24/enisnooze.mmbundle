@@ -1,5 +1,5 @@
 import pytest
-from Support.bin.snooze_helpers import snooze2days, parse_input
+from Support.bin.snooze_helpers import parse_input
 import datetime
 
 
@@ -8,37 +8,57 @@ import datetime
     ("2020-06-01", "5d", "2020-06-06"),
     ("2020-06-01", "1d", "2020-06-02"),
     ("2012-12-31", "1d", "2013-01-01"),
+    ("2020-02-28", "1d", "2020-02-29"),
+    ("2020-02-29", "1d", "2020-03-01"),
+    ("2020-06-01", "1m", "2020-07-01"),
+    ("2020-06-01", "2m", "2020-08-01"),
+    ("2020-06-01", "5m", "2020-11-01"),
+    ("2020-06-01", "7m", "2021-01-01"),
+    ("2020-06-01", "12m", "2021-06-01"),
+    ("2050-11-10", "24m", "2052-11-10"),
+    ("2050-11-10", "36m", "2053-11-10"),
+    ("2020-01-29", "1m", "2020-02-29"),
+    ("2021-01-29", "1m", "2021-03-01"),
+    ("2020-12-30", "2m", "2021-03-01"),
+    ("2020-12-31", "2m", "2021-03-01"),
+    ("2021-07-31", "1m", "2021-08-31"),
+    ("2021-07-31", "2m", "2021-10-01"),
+    ("1980-01-01", "1w", "1980-01-08"),
+    ("2020-11-20", "2w", "2020-12-04"),
 ])
-def test_snooze_days(ds_today, x, ds_result):
+def test_snooze_timespec(ds_today, x, ds_result):
     today = datetime.datetime.strptime(ds_today, "%Y-%m-%d")
     snoozedate = parse_input(x, today)
-    assert  snoozedate.strftime("%Y-%m-%d") == ds_result
+    assert snoozedate.strftime("%Y-%m-%d") == ds_result
 
 
-@pytest.mark.parametrize("x,y",  [
-    ("1w", 7),
-    ("2w", 14),
-    ("10w", 70),
+@pytest.mark.parametrize("ds_today,x,ds_result",  [
+    ("2020-12-03", "tom", "2020-12-04"),
+    ("2020-12-03", "fri", "2020-12-04"),
+    ("2020-12-03", "sat", "2020-12-05"),
+    ("2020-12-03", "sun", "2020-12-06"),
+    ("2020-12-03", "mon", "2020-12-07"),
+    ("2020-12-03", "tue", "2020-12-08"),
+    ("2020-12-03", "wed", "2020-12-09"),
+    ("2020-12-03", "thu", "2020-12-10"),
+    ("2020-12-28", "sat", "2021-01-02"),
 ])
-def test_timespec2days_weeks(x, y):
-    assert snooze2days(x) == y
+def test_snooze_timespec_weekdays_tom(ds_today, x, ds_result):
+    today = datetime.datetime.strptime(ds_today, "%Y-%m-%d")
+    snoozedate = parse_input(x, today)
+    assert snoozedate.strftime("%Y-%m-%d") == ds_result
 
 
-@pytest.mark.parametrize("x,y",  [
-    ("1m", 30),
-    ("2m", 60),
-    ("5m", 150),
+@pytest.mark.parametrize("ds", [
+    ("-1m"),
+    ("xyx"),
+    ("3x"),
+    (""),
+    ("27l"),
 ])
-def test_timespec2days_months(x, y):
-    assert snooze2days(x) == y
-
-
-def test_timespec2days_invalid():
-    assert snooze2days("-1m") < 0
-    assert snooze2days("xyx") < 0
-    assert snooze2days("3x") < 0
-    assert snooze2days("") < 0
-    assert snooze2days("27l") < 0
+def test_specparsing_invalid(ds):
+    with pytest.raises(ValueError):
+        parse_input(ds)
 
 
 @pytest.mark.parametrize("ds", [
@@ -100,6 +120,7 @@ def test_dateparsing_dm_without_year(ds_today, ds, ds_result):
     ("a"),
     ("1"),
     (""),
+    None,
 ])
 def test_dateparsing_invalid(ds):
     with pytest.raises(ValueError):
@@ -111,4 +132,3 @@ def test_unspecified_snooze():
 
     assert snoozedate is not None
     assert snoozedate.strftime("%Y-%m-%d") == "1900-01-01"
-

@@ -3,22 +3,55 @@
 import datetime
 
 WEEKDAYS = "mon", "tue", "wed", "thu", "fri", "sat", "sun"
-TIMESPEC = "d", "w", "m"
 
 
-def timespec2days(spec):
+def add_months(dt: datetime.datetime, months_to_add: int):
+    y = dt.year + ((dt.month + months_to_add) // 12)
+    m = (dt.month + months_to_add) % 12
+    d = dt.day
+    dadd = 0
+
+    # handle end of february
+    if m == 2 and d >= 30:
+        m, d = 3, 1
+    elif m == 2 and d == 29:
+        d, dadd = 28, 1
+    elif d == 31:
+        d, dadd = 30, 1
+
+    result = dt.replace(day=d, month=m, year=y) + datetime.timedelta(dadd)
+    return result
+
+
+def timespec2targetdate(spec, todays_date):
     if spec is None:
         raise ValueError("Invalid snooze time format: <None>")
 
+    if spec in WEEKDAYS:
+        twd = WEEKDAYS.index(spec)  # target weekday
+        delta = twd - todays_date.weekday()
+        if delta <= 0:
+            delta += 7  # days until target wd
+        return todays_date + datetime.timedelta(delta)
+
+    if spec == "tom":
+        return todays_date + datetime.timedelta(1)
+
+    # parse as timespec <n><unit>, e.g. 2d, 5w, 3m
     unit = spec[-1]
     amount = int(spec[0:len(spec) - 1])
 
+    if amount < 0:
+        raise ValueError("Nagative value in timespec: '" + spec + "'")
+
     if unit == "d":
-        return amount
-    elif unit == "w":
-        return amount * 7
-    elif unit == "m":
-        return amount * 30
+        return todays_date + datetime.timedelta(amount)
+
+    if unit == "w":
+        return todays_date + datetime.timedelta(amount * 7)
+
+    if unit == "m":
+        return add_months(todays_date, amount)
 
     raise ValueError("Invalid unit in timespec: '" + unit + "'")
 
@@ -61,49 +94,21 @@ def snooze2targetdate_with_format(x, frmt):
         raise ValueError("Invalid snooze time format: '" + x + "'")
 
 
-# in: snooze input (e.g. 1d, 2d, 5w, 1m, tom, mon, wed, ...)
-# out: days to snooze as integer 
-# returns value < 0 if no delta could be calculated
-def snooze2days(x):
-    # too short -> reject
-    if len(x) < 1:
-        return -1
-
-    dt = datetime.datetime.today()
-    # dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    # check if weekday was entered
-    if x in WEEKDAYS:
-        twd = WEEKDAYS.index(x)  # target weekday
-        delta = twd - dt.weekday()
-        if delta <= 0:
-            delta += 7  # days until target wd
-        return delta
-
-    # "tom" = tomorrow
-    if x == "tom":
-        return 1
-
-    # specified "d" "m" or "w"?
-    if x[-1] in TIMESPEC:
-        return timespec2days(x)
-
-    # if all fails: return -1
-    return -1
-
-
 def parse_input(x, todays_date=datetime.datetime.today()):
 
-    if x == "ff":
+    # special cases
+    if x is None:
+        raise ValueError("Invalid Input: <None>")
+    elif len(x) == 0:
+        raise ValueError("Invalid Input with length 0")
+    elif x == "ff":
         return datetime.datetime.strptime("1900-01-01", "%Y-%m-%d")
 
-    days = snooze2days(x)
-    dt = todays_date
-
-    if days > 0:
-        dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
-        dt = dt + datetime.timedelta(days)
-    else:
+    try:
+        # parse as spec (2d, 1m, 3w, ...)
+        dt = timespec2targetdate(x, todays_date)
+    except(ValueError):
+        # parse as date
         dt = snooze2targetdate(x, todays_date)  # may raise error
 
     return dt
